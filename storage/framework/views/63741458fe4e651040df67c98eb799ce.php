@@ -1,0 +1,500 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Edit Facility | Digital Library</title>
+
+    <style>
+        :root {
+            --primary: #244C3A;
+            --primary-dark: #193829;
+            --background: #F5F1E8;
+            --surface: #FFFFFF;
+            --sage: #DCE8DD;
+            --text: #29372F;
+            --muted: #78847B;
+            --border: #E5E7DF;
+            --danger: #B64B43;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+
+        body {
+            background: var(--background);
+            color: var(--text);
+            min-height: 100vh;
+            padding: 35px 20px;
+        }
+
+        .container {
+            max-width: 850px;
+            margin: auto;
+        }
+
+        .breadcrumb {
+            margin-bottom: 22px;
+            font-size: 13px;
+            color: var(--muted);
+        }
+
+        .breadcrumb a {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 600;
+        }
+
+        .page-header {
+            margin-bottom: 25px;
+        }
+
+        .page-header h1 {
+            color: var(--primary);
+            font-size: 27px;
+            margin-bottom: 8px;
+        }
+
+        .page-header p {
+            color: var(--muted);
+            font-size: 14px;
+        }
+
+        .form-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 3px 12px rgba(36, 76, 58, 0.05);
+        }
+
+        .section-title {
+            color: var(--primary);
+            font-size: 17px;
+            margin-bottom: 22px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .full-width {
+            grid-column: 1 / -1;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text);
+        }
+
+        .required {
+            color: var(--danger);
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1px solid var(--border);
+            border-radius: 7px;
+            background: #FFFFFF;
+            font-size: 13px;
+            color: var(--text);
+            outline: none;
+            transition: 0.2s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(36, 76, 58, 0.08);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .checkbox-group {
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            margin-top: 5px;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            gap: 9px;
+            font-size: 13px;
+        }
+
+        .checkbox-item input {
+            width: 17px;
+            height: 17px;
+            accent-color: var(--primary);
+            cursor: pointer;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+        }
+
+        .error {
+            color: var(--danger);
+            font-size: 12px;
+            margin-top: 6px;
+        }
+
+        .alert {
+            background: #FCE8E6;
+            color: #A13E35;
+            border: 1px solid #F3C6C1;
+            border-radius: 7px;
+            padding: 14px;
+            margin-bottom: 22px;
+            font-size: 13px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+            margin-top: 30px;
+            padding-top: 22px;
+            border-top: 1px solid var(--border);
+        }
+
+        .btn {
+            padding: 12px 20px;
+            border-radius: 7px;
+            font-size: 13px;
+            font-weight: 600;
+            text-decoration: none;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--primary-dark);
+        }
+
+        .btn-secondary {
+            background: var(--sage);
+            color: var(--primary);
+        }
+
+        .btn-secondary:hover {
+            background: #C9DCCB;
+        }
+
+        .footer {
+            text-align: center;
+            color: var(--muted);
+            font-size: 11px;
+            margin-top: 25px;
+        }
+
+        @media (max-width: 600px) {
+            .form-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .full-width {
+                grid-column: auto;
+            }
+
+            .form-card {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="breadcrumb">
+        <a href="<?php echo e(route('facilities.index')); ?>">Facilities</a>
+        / Edit Facility
+    </div>
+
+    <div class="page-header">
+        <h1>Edit Facility</h1>
+        <p>Update the information of your library facility.</p>
+    </div>
+
+    <div class="form-card">
+
+        <h3 class="section-title">Facility Information</h3>
+
+        <?php if($errors->any()): ?>
+            <div class="alert">
+                <strong>Please fix the following errors:</strong>
+
+                <ul style="margin: 10px 0 0 20px;">
+                    <?php $__currentLoopData = $errors->all(); $__env->addLoop($__currentLoopData); foreach($__currentLoopData as $error): $__env->incrementLoopIndices(); $loop = $__env->getLastLoop(); ?>
+                        <li><?php echo e($error); ?></li>
+                    <?php endforeach; $__env->popLoop(); $loop = $__env->getLastLoop(); ?>
+                </ul>
+            </div>
+        <?php endif; ?>
+
+        <form action="<?php echo e(route('facilities.update', $facility->id)); ?>" method="POST">
+
+            <?php echo csrf_field(); ?>
+            <?php echo method_field('PUT'); ?>
+
+            <div class="form-grid">
+
+                <div class="form-group">
+                    <label for="area_name">
+                        Area Name <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="area_name"
+                        name="area_name"
+                        value="<?php echo e(old('area_name', $facility->area_name)); ?>"
+                        required
+                    >
+
+                    <?php $__errorArgs = ['area_name'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                        <p class="error"><?php echo e($message); ?></p>
+                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                </div>
+
+                <div class="form-group">
+                    <label for="area_number">
+                        Area Number <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        id="area_number"
+                        name="area_number"
+                        value="<?php echo e(old('area_number', $facility->area_number)); ?>"
+                        required
+                    >
+
+                    <?php $__errorArgs = ['area_number'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                        <p class="error"><?php echo e($message); ?></p>
+                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                </div>
+
+                <div class="form-group">
+                    <label for="floor_number">
+                        Floor Number <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="number"
+                        id="floor_number"
+                        name="floor_number"
+                        value="<?php echo e(old('floor_number', $facility->floor_number)); ?>"
+                        min="1"
+                        required
+                    >
+
+                    <?php $__errorArgs = ['floor_number'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                        <p class="error"><?php echo e($message); ?></p>
+                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                </div>
+
+                <div class="form-group">
+                    <label for="area_type">
+                        Area Type <span class="required">*</span>
+                    </label>
+
+                    <select id="area_type" name="area_type" required>
+
+                        <option value="Reading Room"
+                            <?php echo e(old('area_type', $facility->area_type) == 'Reading Room' ? 'selected' : ''); ?>>
+                            Reading Room
+                        </option>
+
+                        <option value="Silent Room"
+                            <?php echo e(old('area_type', $facility->area_type) == 'Silent Room' ? 'selected' : ''); ?>>
+                            Silent Room
+                        </option>
+
+                        <option value="Discussion Room"
+                            <?php echo e(old('area_type', $facility->area_type) == 'Discussion Room' ? 'selected' : ''); ?>>
+                            Discussion Room
+                        </option>
+
+                    </select>
+
+                    <?php $__errorArgs = ['area_type'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                        <p class="error"><?php echo e($message); ?></p>
+                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                </div>
+
+                <div class="form-group full-width">
+                    <label>Available Facilities</label>
+
+                    <div class="checkbox-group">
+
+                        <div class="checkbox-item">
+                            <input
+                                type="checkbox"
+                                id="has_wifi"
+                                name="has_wifi"
+                                value="1"
+                                <?php echo e(old('has_wifi', $facility->has_wifi) ? 'checked' : ''); ?>
+
+                            >
+
+                            <label for="has_wifi">WiFi Available</label>
+                        </div>
+
+                        <div class="checkbox-item">
+                            <input
+                                type="checkbox"
+                                id="has_power_outlet"
+                                name="has_power_outlet"
+                                value="1"
+                                <?php echo e(old('has_power_outlet', $facility->has_power_outlet) ? 'checked' : ''); ?>
+
+                            >
+
+                            <label for="has_power_outlet">Power Outlet Available</label>
+                        </div>
+
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="status">
+                        Area Status <span class="required">*</span>
+                    </label>
+
+                    <select id="status" name="status" required>
+
+                        <option value="available"
+                            <?php echo e(old('status', $facility->status) == 'available' ? 'selected' : ''); ?>>
+                            Available
+                        </option>
+
+                        <option value="occupied"
+                            <?php echo e(old('status', $facility->status) == 'occupied' ? 'selected' : ''); ?>>
+                            Occupied
+                        </option>
+
+                        <option value="maintenance"
+                            <?php echo e(old('status', $facility->status) == 'maintenance' ? 'selected' : ''); ?>>
+                            Maintenance
+                        </option>
+
+                    </select>
+
+                    <?php $__errorArgs = ['status'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                        <p class="error"><?php echo e($message); ?></p>
+                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                </div>
+
+                <div class="form-group full-width">
+                    <label for="description">Description</label>
+
+                    <textarea
+                        id="description"
+                        name="description"
+                    ><?php echo e(old('description', $facility->description)); ?></textarea>
+
+                    <?php $__errorArgs = ['description'];
+$__bag = $errors->getBag($__errorArgs[1] ?? 'default');
+if ($__bag->has($__errorArgs[0])) :
+if (isset($message)) { $__messageOriginal = $message; }
+$message = $__bag->first($__errorArgs[0]); ?>
+                        <p class="error"><?php echo e($message); ?></p>
+                    <?php unset($message);
+if (isset($__messageOriginal)) { $message = $__messageOriginal; }
+endif;
+unset($__errorArgs, $__bag); ?>
+                </div>
+
+            </div>
+
+            <div class="form-actions">
+
+                <a href="<?php echo e(route('facilities.index')); ?>"
+                   class="btn btn-secondary">
+                    Cancel
+                </a>
+
+                <button type="submit" class="btn btn-primary">
+                    Update Facility
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <div class="footer">
+        © <?php echo e(date('Y')); ?> Digital Library Management System
+    </div>
+
+</div>
+
+</body>
+</html>
+<?php /**PATH C:\Users\User\digital-library\resources\views/facilities/edit.blade.php ENDPATH**/ ?>
